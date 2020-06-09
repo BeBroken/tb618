@@ -166,23 +166,14 @@ function IsMainForm() {
 
 function CheckAndGoActivity(isBegining) {
     if (IsMainForm()) {
-        GoActivityFlag = false;
         ShowMessage("当前在主界面");
         ShowMessage("尝试进入618列车界面");
-        if (!(GoActivityFlag = TryGoActivityPage())) {
-            ClickMainPage();
-            sleep(2000);
-            var RetryCoutner = 0;
-            while (++RetryCoutner <= 10 && !(GoActivityFlag = TryGoActivityPage())) {
-                swipe(width / 2, 400, width / 2, height * 0.4, 1000);
-                sleep(1000);
-            }
-        }
-        sleep(6000);
-
-        if (!GoActivityFlag) {
+        if(!TryGoActivityPage()) {
             ShowMessage("进入主互动界面失败！");
             eixt();
+        }
+        else{
+            sleep(6000);
         }
     }
     // 跳出领取祝福的处理
@@ -201,7 +192,7 @@ function CheckAndGoActivity(isBegining) {
             ClickLingmiaobi();
             sleep(1500);
         }
-        if (textMatches("关闭").exists()) {
+        if (textMatches("关闭").exists() || textMatches("淘宝成就点").exists()) {
             if (isBegining) {
                 ShowMessage("开始领取瞄币");
             }
@@ -242,6 +233,24 @@ function ClickMainPage() {
 }
 
 function TryGoActivityPage() {
+    return (GoActivityByButton() || GoActivityBySearching());
+}
+
+function GoActivityByButton() {
+    var GoActivityFlag = false;
+    if (!(GoActivityFlag = TryClickGoAcivityBtn())) {
+        ClickMainPage();
+        sleep(2000);
+        var RetryCoutner = 0;
+        while (++RetryCoutner <= 5 && !(GoActivityFlag = TryClickGoAcivityBtn())) {
+            swipe(width / 2, 400, width / 2, height * 0.4, 1000);
+            sleep(1000);
+        }
+    }
+    return GoActivityFlag;
+}
+
+function TryClickGoAcivityBtn() {
     var GoPage = className("android.widget.FrameLayout").
         depth(12).indexInParent(9).boundsInside(0, 200, device.width, device.height - 300).findOnce();
     if (GoPage) {
@@ -250,5 +259,45 @@ function TryGoActivityPage() {
     }
     else {
         return false;
+}
+}
+/**
+ * @brief Go to activity page by searching method
+ * 
+ * @return true if successed
+ */
+function GoActivityBySearching() {
+    var searchBox = className("android.widget.FrameLayout").clickable(true).depth(13).findOnce();
+    if(searchBox){
+        searchBox.click();
+        sleep(1000);
     }
+
+    if(IsOnSearching()){
+        searchContext = className("android.widget.EditText").clickable(true).findOnce();
+        searchButton = className("android.widget.Button").desc("搜索").findOnce();
+        if(!searchContext){
+            toast("搜索输入框不存在")
+            return false;
+        }
+        else if(!searchContext){
+            toast("搜索按钮不存在")
+            return false;
+        }
+        else{
+            searchContext.setText("618列车");
+            searchButton.click();
+        }
+    }else{
+        toast("未能正常进入搜索界面")
+        return false;
+    }
+    return true;
+}
+
+/**
+ * @brief check whether is on the second step of searching
+ */
+function IsOnSearching(){
+    return className("android.view.View").depth(8).desc("语音搜索").exists();
 }

@@ -50,7 +50,9 @@ function DoActions() {
     DoClickAction("签到");
     DoClickAction("去兑换");
     DoVisitAction("去浏览");
+    DoVisitAction("去完成");
     DoVisitAction("去进店");
+    DoVisitAction("去逛逛");
     DoVisitAction("去围观");
     DoLookAction("去观看");
     DoFarmAction();
@@ -139,6 +141,12 @@ function DoFarmAction(){
         return;
     ShowMessage("准备" + actionName);
     sleep(4000);
+    var GatherBtn = className("android.view.View").text("立即去收").findOnce();
+    if(GatherBtn){
+        var GatherBtnBounds = GatherBtn.bounds();
+        click(GatherBtn.centerX(), GatherBtn.centerY());
+        sleep(2000);
+    }
     var GameRegion = className("android.view.View").depth(8).indexInParent(1).findOnce();
     if (GameRegion) {
         var aBnd = GameRegion.bounds();

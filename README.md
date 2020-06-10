@@ -4,13 +4,13 @@
 **使用技巧**
 
 @Marcusias 提出通过远程拉取页面，实现自动使用最新脚本的方法，若能够正常连接githubusercontent.com，可以考虑直接在autojs中使用以下代码运行脚本：
-
+```
 eval(http.get('https://raw.githubusercontent.com/ZehuanZhang/tb618/master/tb618.js').body.string());
-
+```
 若不能够正常使用github，或部分github连接受限，请考虑使用[gitee](https://gitee.com/mimr/tb618)上的镜像项目：
-
+```
 eval(http.get('https://gitee.com/mimr/tb618/raw/master/tb618.js').body.string())
-
+```
 **请注意：建议使用autojs 4.0以上的版本运行**
 
 1. 使用本脚本前请安装auto.js软件

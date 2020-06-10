@@ -113,7 +113,7 @@ function DoVisitAction(ActBtn) {
 
     var actionName = ActBtn.text();
     ShowMessage("准备" + actionName);
-    text(actionName).findOnce().click();
+    ActBtn.click();
     sleep(1500);
     swipe(width / 2, height - 400, width / 2, 0, 1000);
     sleep(5000);
@@ -204,6 +204,7 @@ function DoFarmAction() {
         back();
     }
     if (OneMoreBack) back();
+    back();
     ShowMessage("完成" + actionName);
 }
 

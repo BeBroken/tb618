@@ -222,7 +222,7 @@ function CheckAndGoActivity(isBegining) {
         ShowMessage("尝试进入618列车界面");
         if (!GoActivityByButton() && !GoActivityBySearching()) {
             ShowMessage("进入主互动界面失败！");
-            eixt();
+            exit();
         }
         else {
             sleep(6000);
@@ -233,7 +233,7 @@ function CheckAndGoActivity(isBegining) {
         ShowMessage("尝试进入618列车界面");
         if (!GoActivityBySearching()) {
             ShowMessage("进入主互动界面失败！");
-            eixt();
+            exit();
         }
         else {
             sleep(6000);

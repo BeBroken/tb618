@@ -48,6 +48,9 @@ ShowMessage(
     "好用的话请点个Star哦!");
 
 function DoActions() {
+    if("undefined" == typeof ActList)
+        ActList = new Array();
+    
     var ActionsList = className("android.widget.ListView").depth(16).findOnce();
     var retVal = false;
     if (ActionsList) {
@@ -58,6 +61,12 @@ function DoActions() {
             var ActionContext = ActionsList.child(i);
             var ActBtn = ActionContext.child(1);
             var ActContent = ActionContext.child(0);
+            var ActText = ActContent.text();
+            ActText = ActText.substring(0, ActText.indexOf("("));
+            if(ActList.indexOf(ActText) != -1) {
+                incFlag = true;
+                continue;
+            }
             switch (ActBtn.text()) {
                 case "去浏览":
                 case "去逛逛":
@@ -72,7 +81,7 @@ function DoActions() {
                         else {
                             var astr = ActContent.text();
                             astr = astr.substring(0, astr.indexOf("("));
-                            ShowMessage("不支持\"" + astr + "\"");
+                            ShowMessage("不支持\"" + ActText + "\"");
                             incFlag = true;
                         }
                     } break;
@@ -87,6 +96,7 @@ function DoActions() {
                     incFlag = true;
                     break;
             }
+            ActList.push(ActText);
         }
         if(!incFlag) retVal = true;
     }

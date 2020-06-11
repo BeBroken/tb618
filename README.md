@@ -29,9 +29,11 @@ eval(http.get('https://gitee.com/mimr/tb618/raw/master/tb618.js').body.string())
 
 > 最新更新
 
-2020/06/11 Update1: 修复部分错误
+2020/06/12 Update1: 更新列表元素判断逻辑
 
 > 历史更新
+
+2020/06/11 Update1: 修复部分错误
 
 2020/06/10 Update1: 领喵币逻辑更新，支持多个位置进入618界面，新增多个窗口定位方法
 

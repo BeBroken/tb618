@@ -386,7 +386,7 @@ function GoActivityByButton() {
         ClickMainPage();
         sleep(2000);
         var RetryCoutner = 0;
-        while (++RetryCoutner <= 5 && !(GoActivityFlag = TryClickGoAcivityBtn())) {
+        while (++RetryCoutner <= 3 && !(GoActivityFlag = TryClickGoAcivityBtn())) {
             swipe(width / 2, 400, width / 2, height * 0.4, 1000);
             sleep(1000);
         }
@@ -398,11 +398,11 @@ function GoActivityByButton() {
  * @brief Trying to click the interface button of activity
  */
 function TryClickGoAcivityBtn() {
-    var GoPage = className("android.widget.FrameLayout").
-        depth(12).indexInParent(9).boundsInside(0, 200, device.width, device.height - 300).findOnce();
+    var GoPage = className("android.widget.FrameLayout").clickable(true).
+        depth(12).indexInParent(11).boundsInside(0, 200, device.width, device.height - 300).findOnce();
     if (GoPage) {
         GoPage.click();
-        return true;
+        return !IsOnMainForm();
     }
     else {
         return false;

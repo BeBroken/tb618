@@ -5,6 +5,11 @@
  * @detail 本脚本任何人可自由使用，不包含任何收费、协助点击、分享等内容，
  *         若需移植、修改或分享，请保留该文件头，尊重劳动成果！
  */
+
+///////////////////////////////////////////////////////////////////////////////
+// 主要操作部分
+///////////////////////////////////////////////////////////////////////////////
+
 // 检查无障碍模式是否启用
 if ("undefined" == typeof GlobalDisableWaitFor) var GlobalDisableWaitFor = false;
 if (!GlobalDisableWaitFor) {
@@ -19,6 +24,7 @@ if (!GlobalDisableWaitFor) {
 else {
     ShowMessage("无障碍模式检测已关闭");
 }
+
 // 获取设备屏幕信息
 var height = device.height;
 var width = device.width;
@@ -32,22 +38,43 @@ ShowMessage(
     "安卓版本: " + device.release);
 
 var appName = "手机淘宝";
-ShowMessage("打开" + appName)
-launchApp(appName);
-sleep(3000);
-
+if (!IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() && !IsOnActivitySheet()) {
+    ShowMessage("打开" + appName)
+    launchApp(appName);
+    sleep(3000);
+}
 // 进入活动界面
 CheckAndGoActivity(true);
 // 签到
-DoClickAction("签到");
+PerformClick("签到");
 // 执行领喵币操作
-while(DoActions());
-ShowMessage("结束")
+while(PerformActions());
+
+ShowMessage("操作已全部完成，共分析" + ActList.length + "个操作")
 ShowMessage(
     "Github项目: tb618\n" +
     "好用的话请点个Star哦!");
 
-function DoActions() {
+///////////////////////////////////////////////////////////////////////////////
+// 函数部分
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief Show message and print it on console
+ * 
+ * @param msg The message 
+ */
+function ShowMessage(msg) {
+    log(msg);
+    sleep(1500);
+    toast(msg);
+    sleep(1500);
+}
+
+/**
+ * @brief Analysis actions and perform it
+ */
+function PerformActions() {
     if("undefined" == typeof ActList)
         ActList = new Array();
     
@@ -76,7 +103,7 @@ function DoActions() {
                     {
                         var re = new RegExp("(浏览|逛一逛).*喵币");
                         if (re.test(ActContent.text())) {
-                            DoVisitAction(ActBtn);
+                            PerformVisit(ActBtn);
                         }
                         else {
                             var astr = ActContent.text();
@@ -87,11 +114,11 @@ function DoActions() {
                     } break;
                 case "签到":
                 case "去兑换":
-                    DoClickAction(ActBtn.text()); break;
+                    PerformClick(ActBtn.text()); break;
                 case "去观看":
-                    DoLookAction("去观看"); break;
+                    PerformLook("去观看"); break;
                 case "去收菜":
-                    DoFarmAction(); break;
+                    PerformFarming(); break;
                 default:
                     incFlag = true;
                     break;
@@ -103,7 +130,12 @@ function DoActions() {
     return retVal;
 }
 
-function WaitActionFinished(Timeout) {
+/**
+ * @brief Wait visit action finished (by searching keyword)
+ * 
+ * @param Timeout The timeout value (default is 15s)
+ */
+function WaitVisitFinished(Timeout) {
     if (!Timeout) Timeout = 15000;
 
     var Timer = 0
@@ -118,7 +150,12 @@ function WaitActionFinished(Timeout) {
     }
 }
 
-function DoVisitAction(ActBtn) {
+/**
+ * @brief Perform visit action
+ * 
+ * @param ActBtn The trigger button for a visit action
+ */
+function PerformVisit(ActBtn) {
     if(!ActBtn) return;
 
     var actionName = ActBtn.text();
@@ -131,14 +168,19 @@ function DoVisitAction(ActBtn) {
     sleep(5000);
     swipe(width / 2, height - 400, width / 2, 0, 1000);
     // 鉴于前面操作需要一部分时间，这里减少一些
-    WaitActionFinished(8000);
+    WaitVisitFinished(8000);
     back();
     // 防止淘宝骚操作，若返回主界面，尝试重新进入活动界面
     CheckAndGoActivity();
     ShowMessage("完成" + actionName);
 }
 
-function DoClickAction(actionName) {
+/**
+ * @brief Perform click action
+ * 
+ * @param actionName The click action name
+ */
+function PerformClick(actionName) {
     if (!text(actionName).exists()) return;
 
     ShowMessage("准备" + actionName)
@@ -151,21 +193,19 @@ function DoClickAction(actionName) {
     }
 }
 
-function ShowMessage(msg) {
-    log(msg);
-    sleep(1500);
-    toast(msg);
-    sleep(1500);
-}
-
-function DoLookAction(actionName) {
+/**
+ * @brief Perform look action
+ * 
+ * @param actionName The trigger button name
+ */
+function PerformLook(actionName) {
     if (!text(actionName).exists()) return;
 
     ShowMessage("准备" + actionName)
     while (text(actionName).exists()) {
         ShowMessage("存在" + actionName);
         text(actionName).findOnce().click();
-        WaitActionFinished();
+        WaitVisitFinished();
         ShowMessage("完成" + actionName);
         back();
         sleep(1000);
@@ -173,7 +213,10 @@ function DoLookAction(actionName) {
     ShowMessage("完成" + actionName);
 }
 
-function DoFarmAction() {
+/**
+ * @brief Perform farming
+ */
+function PerformFarming() {
     actionName = "去收菜";
     var Btn = text(actionName).findOnce();
     if (Btn)
@@ -181,12 +224,8 @@ function DoFarmAction() {
     else
         return;
     ShowMessage("准备" + actionName);
-    var OneMoreBack = false;
     var JumpBtn = className("android.view.View").clickable(true).depth(15).indexInParent(0).findOnce();
-    if (JumpBtn) {
-        JumpBtn.click();
-        OneMoreBack = true;
-    }
+    if (JumpBtn) JumpBtn.click();
     sleep(4000);
     var GatherBtn = className("android.view.View").text("立即去收").findOnce();
     if (GatherBtn) {
@@ -202,32 +241,61 @@ function DoFarmAction() {
         var HStep = aBnd.height() / 5;
         var WStep = aBnd.width() / 4;
         click(X + WStep * 2, Y + HStep * 4)
+        click(X + WStep * 2, Y + HStep * 4 - 150)
         sleep(1500);
         click(X + WStep * 2, Y + HStep * 4)
+        click(X + WStep * 2, Y + HStep * 4 - 150)
         sleep(1500);
         click(X + WStep * 2, Y + HStep * 4)
+        click(X + WStep * 2, Y + HStep * 4 - 150)
         sleep(1500);
-        back();
     }
-    else{
+    else {
         ShowMessage("无法定位界面");
-        back();
     }
-    if (OneMoreBack) back();
-    back();
+    // 退回至活动表、活动窗口、主界面中的任一个
+    while(!IsOnActivitySheet() && !IsOnActivityForm() && !IsOnMainForm()) back();
+    // 防止意外返回主界面
+    CheckAndGoActivity();
     ShowMessage("完成" + actionName);
 }
 
-function IsMainForm() {
+/**
+ * @brief Check whether is on main form
+ */
+function IsOnMainForm() {
     return className("android.view.View").desc("搜索").depth(12).exists();
 }
 
-function IsSearchingForm() {
+/**
+ * @brief Check whether is on searching form
+ */
+function IsOnSearchingForm() {
     return className("android.widget.EditText").clickable(true).exists();
 }
 
+/**
+ * @brief Check whether is on activity form
+ */
+function IsOnActivityForm() {
+    return descMatches("(.+)?我的列车(.+)?").exists() || textMatches("(.+)?我的列车(.+)?").exists();
+}
+
+/**
+ * @brief Check whether is on activity sheet
+ */
+function IsOnActivitySheet(){
+    return className("android.view.View").id("taskBottomSheet").exists() ||
+           className("android.widget.Button").text("关闭").indexInParent(2).exists();
+}
+
+/**
+ * @brief Check whether on the activity sheet and try switch to it
+ * 
+ * @param isBegining Is this calling at the begining of all activity performing
+ */
 function CheckAndGoActivity(isBegining) {
-    if (IsMainForm()) {
+    if (IsOnMainForm()) {
         ShowMessage("当前在主界面");
         ShowMessage("尝试进入618列车界面");
         if (!GoActivityByButton() && !GoActivityBySearching()) {
@@ -238,7 +306,7 @@ function CheckAndGoActivity(isBegining) {
             sleep(6000);
         }
     }
-    else if (IsSearchingForm()) {
+    else if (IsOnSearchingForm()) {
         ShowMessage("当前在搜索界面");
         ShowMessage("尝试进入618列车界面");
         if (!GoActivityBySearching()) {
@@ -256,10 +324,8 @@ function CheckAndGoActivity(isBegining) {
         giftBtn.click();
         sleep(1500);
     }
-    if (
-        descMatches("(.+)?我的列车(.+)?").exists() ||
-        textMatches("(.+)?我的列车(.+)?").exists()) {
-        if (!textMatches("关闭").exists()) {
+    if (IsOnActivityForm()) {
+        if (!IsOnActivitySheet()) {
             ShowMessage("进入领喵币页面");
             sleep(1000);
             ClickLingmiaobi();
@@ -278,11 +344,10 @@ function CheckAndGoActivity(isBegining) {
         exit();
     }
 }
-function IsOnActivitySheet(){
-    return className("android.view.View").id("taskBottomSheet").exists() ||
-           textMatches("关闭").exists() ||
-           textMatches("淘宝成就点").exists();
-}
+
+/**
+ * @brief Click the Lingmiaobi button
+ */
 function ClickLingmiaobi() {
     if (!IsOnActivitySheet()) {
         var mbbtn = className("android.widget.Button").text("做任务，领喵币").findOnce();
@@ -296,6 +361,9 @@ function ClickLingmiaobi() {
     }
 }
 
+/**
+ * @brief Click the main page button
+ */
 function ClickMainPage() {
     // 查找淘宝按钮
     var MainPageBtn = className("android.widget.FrameLayout").clickable(true).selected(true).depth(9).findOnce();
@@ -309,6 +377,9 @@ function ClickMainPage() {
     }
 }
 
+/**
+ * @brief Go to activity form by clicking the interface button
+ */
 function GoActivityByButton() {
     var GoActivityFlag = false;
     if (!(GoActivityFlag = TryClickGoAcivityBtn())) {
@@ -323,6 +394,9 @@ function GoActivityByButton() {
     return GoActivityFlag;
 }
 
+/**
+ * @brief Trying to click the interface button of activity
+ */
 function TryClickGoAcivityBtn() {
     var GoPage = className("android.widget.FrameLayout").
         depth(12).indexInParent(9).boundsInside(0, 200, device.width, device.height - 300).findOnce();
@@ -334,6 +408,7 @@ function TryClickGoAcivityBtn() {
         return false;
     }
 }
+
 /**
  * @brief Go to activity page by searching method
  * 

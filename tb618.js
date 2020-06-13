@@ -36,7 +36,7 @@ ShowMessage(
     "设备高: " + height + "\n" +
     "手机型号: " + device.model + "\n" +
     "安卓版本: " + device.release + "\n" +
-    "脚本版本: " + "20200613-R2");
+    "脚本版本: " + "20200613.U4");
 
 var appName = "手机淘宝";
 if (!IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() && !IsOnActivitySheet()) {
@@ -298,15 +298,15 @@ function IsOnActivitySheet(){
 function CheckAndGoActivity(isBegining) {
     if (IsOnMainForm() || IsOnSearchingForm()) {
         ShowMessage("尝试进入618列车界面");
-        // 暂时取消按钮进入操作页面
-        if (!GoActivityBySearching()) {
+
+        GoActivityBySearching();
+
+        if(!IsOnActivityForm()) {
             ShowMessage("进入主互动界面失败！");
             exit();
         }
-        else {
-            sleep(6000);
-        }
     }
+
     // 跳出领取祝福的处理
     var giftBtn = className("android.widget.Button").text("收下祝福").findOnce();
     if (giftBtn) {
@@ -314,7 +314,15 @@ function CheckAndGoActivity(isBegining) {
         giftBtn.click();
         sleep(1500);
     }
+
     if (IsOnActivityForm()) {
+        if (isBegining) {
+            ShowMessage("收取喵币");
+            var CoinsNavElem = className("android.widget.Button").text("打开图鉴").findOnce();
+            if (CoinsNavElem) {
+                click(width / 2, CoinsNavElem.bounds().centerY());
+            }
+        }
         if (!IsOnActivitySheet()) {
             ShowMessage("进入领喵币页面");
             sleep(1000);
@@ -405,10 +413,15 @@ function TryClickGoAcivityBtn() {
  * @return true if successed
  */
 function GoActivityBySearching() {
-    var searchBox = className("android.widget.FrameLayout").clickable(true).depth(13).findOnce();
-    if (searchBox) {
-        searchBox.click();
-        sleep(1000);
+    if (IsOnMainForm()) {
+        var searchButton = className("android.view.View").indexInParent(2).desc("搜索").findOnce();
+        if (searchButton) {
+            var SearchContainer = searchButton.parent();
+            var X = (searchButton.bounds().left - SearchContainer.bounds().left) / 2;
+            var Y = SearchContainer.bounds().centerY();
+            click(X, Y);
+            sleep(1000);
+        }
     }
 
     if (IsOnSearching()) {
@@ -425,12 +438,9 @@ function GoActivityBySearching() {
         else {
             searchContext.setText("618列车");
             searchButton.click();
+            sleep(6000);
         }
-    } else {
-        toast("未能正常进入搜索界面")
-        return false;
     }
-    return true;
 }
 
 /**

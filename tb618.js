@@ -35,7 +35,8 @@ ShowMessage(
     "设备宽: " + width + "\n" +
     "设备高: " + height + "\n" +
     "手机型号: " + device.model + "\n" +
-    "安卓版本: " + device.release);
+    "安卓版本: " + device.release + "\n" +
+    "脚本版本: " + "20200613-R2");
 
 var appName = "手机淘宝";
 if (!IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() && !IsOnActivitySheet()) {

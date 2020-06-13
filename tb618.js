@@ -316,7 +316,7 @@ function CheckAndGoActivity(isBegining) {
     }
 
     if (IsOnActivityForm()) {
-        if (isBegining) {
+        if (isBegining && !IsOnActivitySheet()) {
             ShowMessage("收取喵币");
             var CoinsNavElem = className("android.widget.Button").text("打开图鉴").findOnce();
             if (CoinsNavElem) {

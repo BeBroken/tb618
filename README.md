@@ -29,9 +29,11 @@ eval(http.get('https://gitee.com/mimr/tb618/raw/master/tb618.js').body.string())
 
 > 最新更新
 
-2020/06/13 Update2: 加入代码版本号显示
+2020/06/13 Update3: 完全取消按钮进入活动主界面的操作，只使用搜索方案 #6
 
 > 历史更新
+
+2020/06/13 Update2: 加入代码版本号显示
 
 2020/06/13 Update1: 同步首页层次更新
 

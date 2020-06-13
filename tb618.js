@@ -296,20 +296,9 @@ function IsOnActivitySheet(){
  * @param isBegining Is this calling at the begining of all activity performing
  */
 function CheckAndGoActivity(isBegining) {
-    if (IsOnMainForm()) {
-        ShowMessage("当前在主界面");
+    if (IsOnMainForm() || IsOnSearchingForm()) {
         ShowMessage("尝试进入618列车界面");
-        if (!GoActivityByButton() && !GoActivityBySearching()) {
-            ShowMessage("进入主互动界面失败！");
-            exit();
-        }
-        else {
-            sleep(6000);
-        }
-    }
-    else if (IsOnSearchingForm()) {
-        ShowMessage("当前在搜索界面");
-        ShowMessage("尝试进入618列车界面");
+        // 暂时取消按钮进入操作页面
         if (!GoActivityBySearching()) {
             ShowMessage("进入主互动界面失败！");
             exit();

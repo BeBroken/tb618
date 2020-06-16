@@ -36,7 +36,7 @@ ShowMessage(
     "设备高: " + height + "\n" +
     "手机型号: " + device.model + "\n" +
     "安卓版本: " + device.release + "\n" +
-    "脚本版本: " + "20200617.U1");
+    "脚本版本: " + "20200617.U2");
 
 var appName = "手机淘宝";
 if (!IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() && !IsOnActivitySheet()) {
@@ -325,9 +325,7 @@ function CheckAndGoActivity(isBegining) {
         }
         if (!IsOnActivitySheet()) {
             ShowMessage("进入领喵币页面");
-            sleep(1000);
             ClickLingmiaobi();
-            sleep(1500);
         }
         if (IsOnActivitySheet()) {
             if (isBegining) ShowMessage("开始领取喵币");
@@ -354,11 +352,13 @@ function ClickLingmiaobi() {
         if (mbbtn) {
             var mbbnd = mbbtn.bounds();
             click(mbbnd.centerX(), mbbnd.centerY());
+            sleep(1500);
         }
     }
     if (!IsOnActivitySheet()) {
         ShowMessage("识别领喵币按钮失败，尝试通过位置比例点击领喵币按钮，默认比例：(0.9, 0.9)")
         click(width * 0.9, height * 0.9);
+        sleep(1500);
     }
 }
 

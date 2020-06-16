@@ -37,9 +37,11 @@ eval(http.get('https://gitee.com/mimr/tb618/raw/master/tb618.js').body.string())
 
 > 最新更新
 
-2020/06/17 Update1 : 适配部分模拟器设备无法正常识别领喵币按钮的问题（增加多个元素判断）
+2020/06/17 Update2 : 提升ClickLingmiaobi稳定性
 
 > 历史更新
+
+2020/06/17 Update1 : 适配部分模拟器设备无法正常识别领喵币按钮的问题（增加多个元素判断）
 
 2020/06/13 Update4 (hotfix): 避免在活动表格中进行喵币领取操作
 

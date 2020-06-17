@@ -36,7 +36,7 @@ ShowMessage(
     "设备高: " + height + "\n" +
     "手机型号: " + device.model + "\n" +
     "安卓版本: " + device.release + "\n" +
-    "脚本版本: " + "20200618.U2");
+    "脚本版本: " + "20200618.U3");
 
 var appName = "手机淘宝";
 if (!IsOnTaobao() && !IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() && !IsOnActivitySheet()) {
@@ -256,6 +256,7 @@ function PerformFarming() {
     }
     // 退回至活动表、活动窗口、主界面中的任一个
     while(!IsOnActivitySheet() && !IsOnActivityForm() && !IsOnMainForm()) back();
+    sleep(1500);
     // 防止意外返回主界面
     CheckAndGoActivity();
     ShowMessage("完成" + actionName);
@@ -291,8 +292,10 @@ function IsOnActivityForm() {
  * @brief Check whether is on activity sheet
  */
 function IsOnActivitySheet(){
-    return className("android.view.View").id("taskBottomSheet").exists() ||
-           className("android.widget.Button").text("关闭").indexInParent(2).exists();
+    return id("taskBottomSheet").exists() ||
+           text("关闭").indexInParent(2).exists() ||
+           id("viewpager").exists() ||
+           id("title_container").exists();
 }
 
 /**
@@ -301,6 +304,8 @@ function IsOnActivitySheet(){
  * @param isBegining Is this calling at the begining of all activity performing
  */
 function CheckAndGoActivity(isBegining) {
+    if (IsOnActivityForm() || IsOnActivitySheet()) return;
+
     if (!IsOnTaobao()) {
         ShowMessage("不在淘宝界面！");
         exit();

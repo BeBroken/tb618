@@ -36,10 +36,10 @@ ShowMessage(
     "设备高: " + height + "\n" +
     "手机型号: " + device.model + "\n" +
     "安卓版本: " + device.release + "\n" +
-    "脚本版本: " + "20200618.U1");
+    "脚本版本: " + "20200618.U2");
 
 var appName = "手机淘宝";
-if (!IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() && !IsOnActivitySheet()) {
+if (!IsOnTaobao() && !IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() && !IsOnActivitySheet()) {
     ShowMessage("打开" + appName)
     launchApp(appName);
     sleep(3000);
@@ -260,12 +260,17 @@ function PerformFarming() {
     CheckAndGoActivity();
     ShowMessage("完成" + actionName);
 }
-
+/**
+ * @brief Check wheter is on Taobao
+ */
+function IsOnTaobao() {
+    return id("iv_image").exists() || desc("跳转到猜你喜欢").exists();
+}
 /**
  * @brief Check whether is on main form
  */
 function IsOnMainForm() {
-    return className("android.view.View").desc("搜索").depth(12).exists();
+    return id("uik_refresh_header").exists();
 }
 
 /**
@@ -296,6 +301,13 @@ function IsOnActivitySheet(){
  * @param isBegining Is this calling at the begining of all activity performing
  */
 function CheckAndGoActivity(isBegining) {
+    if (!IsOnTaobao()) {
+        ShowMessage("不在淘宝界面！");
+        exit();
+    }
+    if (!IsOnMainForm()) {
+        ClickMainPage();
+    }
     if (IsOnMainForm() || IsOnSearchingForm()) {
         ShowMessage("尝试进入618列车界面");
 
@@ -367,9 +379,11 @@ function ClickLingmiaobi() {
  */
 function ClickMainPage() {
     // 查找淘宝按钮
-    var MainPageBtn = className("android.widget.FrameLayout").clickable(true).selected(true).depth(9).findOnce();
+    var MainPageBtn = 
+        desc("猜你喜欢").clickable(false).findOnce() || 
+        id("iv_image").clickable(false).findOnce();
     if (MainPageBtn) { // 找到
-        MainPageBtn.click();
+        click(MainPageBtn.bounds().centerX(), MainPageBtn.bounds().centerY());
         sleep(1200);
     }
     else { //没有找到

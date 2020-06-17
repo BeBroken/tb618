@@ -36,7 +36,7 @@ ShowMessage(
     "设备高: " + height + "\n" +
     "手机型号: " + device.model + "\n" +
     "安卓版本: " + device.release + "\n" +
-    "脚本版本: " + "20200617.U2");
+    "脚本版本: " + "20200618.U1");
 
 var appName = "手机淘宝";
 if (!IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() && !IsOnActivitySheet()) {
@@ -417,7 +417,9 @@ function TryClickGoAcivityBtn() {
  */
 function GoActivityBySearching() {
     if (IsOnMainForm()) {
-        var searchButton = className("android.view.View").indexInParent(2).desc("搜索").findOnce();
+        var searchButton =
+            className("android.view.View").clickable(true).desc("拍立淘").findOnce() ||
+            className("android.view.View").indexInParent(2).desc("搜索").findOnce();
         if (searchButton) {
             var SearchContainer = searchButton.parent();
             var X = (searchButton.bounds().left - SearchContainer.bounds().left) / 2;

@@ -37,9 +37,11 @@ eval(http.get('https://gitee.com/mimr/tb618/raw/master/tb618.js').body.string())
 
 > 最新更新
 
-2020/06/17 Update2 : 提升ClickLingmiaobi稳定性
+2020/06/18 Update1 : 防止由淘宝618布局更改导致的进入搜索失败
 
 > 历史更新
+
+2020/06/17 Update2 : 提升ClickLingmiaobi稳定性
 
 2020/06/17 Update1 : 适配部分模拟器设备无法正常识别领喵币按钮的问题（增加多个元素判断）
 

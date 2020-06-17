@@ -37,9 +37,13 @@ eval(http.get('https://gitee.com/mimr/tb618/raw/master/tb618.js').body.string())
 
 > 最新更新
 
-2020/06/18 Update1 : 防止由淘宝618布局更改导致的进入搜索失败
+2020/06/18 Update3 : 修复CheckAndGoActivity的部分逻辑错误，提升IsOnActivitySheet稳定性
 
 > 历史更新
+
+2020/06/18 Update2 : 修复由于淘宝页面重新排布的判断问题，避免过分依赖某些易变布局的影响
+
+2020/06/18 Update1 : 防止由淘宝618布局更改导致的进入搜索失败
 
 2020/06/17 Update2 : 提升ClickLingmiaobi稳定性
 

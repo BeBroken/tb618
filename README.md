@@ -37,9 +37,11 @@ eval(http.get('https://gitee.com/mimr/tb618/raw/master/tb618.js').body.string())
 
 > 最新更新
 
-2020/06/18 Update3 : 修复CheckAndGoActivity的部分逻辑错误，提升IsOnActivitySheet稳定性
+2020/06/18 Update4 : 修复部分错误
 
 > 历史更新
+
+2020/06/18 Update3 : 修复CheckAndGoActivity的部分逻辑错误，提升IsOnActivitySheet稳定性
 
 2020/06/18 Update2 : 修复由于淘宝页面重新排布的判断问题，避免过分依赖某些易变布局的影响
 

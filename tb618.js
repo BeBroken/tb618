@@ -36,7 +36,7 @@ ShowMessage(
     "设备高: " + height + "\n" +
     "手机型号: " + device.model + "\n" +
     "安卓版本: " + device.release + "\n" +
-    "脚本版本: " + "20200618.U3");
+    "脚本版本: " + "20200618.U4");
 
 var appName = "手机淘宝";
 if (!IsOnTaobao() && !IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() && !IsOnActivitySheet()) {
@@ -44,6 +44,7 @@ if (!IsOnTaobao() && !IsOnMainForm() && !IsOnActivityForm() && !IsOnSearching() 
     launchApp(appName);
     sleep(3000);
 }
+log("Taobao checking finished");
 // 进入活动界面
 CheckAndGoActivity(true);
 // 签到
@@ -171,6 +172,7 @@ function PerformVisit(ActBtn) {
     // 鉴于前面操作需要一部分时间，这里减少一些
     WaitVisitFinished(8000);
     back();
+    sleep(1500);
     // 防止淘宝骚操作，若返回主界面，尝试重新进入活动界面
     CheckAndGoActivity();
     ShowMessage("完成" + actionName);
@@ -265,7 +267,9 @@ function PerformFarming() {
  * @brief Check wheter is on Taobao
  */
 function IsOnTaobao() {
-    return id("iv_image").exists() || desc("跳转到猜你喜欢").exists();
+    var retval = id("iv_image").exists() || desc("跳转到猜你喜欢").exists();
+    log("call -> IsOnTaobao -> " + retval);
+    return retval;
 }
 /**
  * @brief Check whether is on main form
@@ -278,24 +282,29 @@ function IsOnMainForm() {
  * @brief Check whether is on searching form
  */
 function IsOnSearchingForm() {
-    return className("android.widget.EditText").clickable(true).exists();
+    var retval = className("android.widget.EditText").clickable(true).exists();
+    log("call -> IsOnSearchingForm -> " + retval);
+    return retval;
 }
 
 /**
  * @brief Check whether is on activity form
  */
 function IsOnActivityForm() {
-    return descMatches("(.+)?我的列车(.+)?").exists() || textMatches("(.+)?我的列车(.+)?").exists();
+    var retval = descMatches("(.+)?我的列车(.+)?").exists() || textMatches("(.+)?我的列车(.+)?").exists();
+    log("call -> IsOnActivityForm -> " + retval);
+    return retval;
 }
 
 /**
  * @brief Check whether is on activity sheet
  */
-function IsOnActivitySheet(){
-    return id("taskBottomSheet").exists() ||
-           text("关闭").indexInParent(2).exists() ||
-           id("viewpager").exists() ||
-           id("title_container").exists();
+function IsOnActivitySheet() {
+    var retval =
+        className("android.view.View").id("taskBottomSheet").exists() ||
+        className("android.widget.Button").text("关闭").exists();
+    log("call -> IsOnActivitySheet -> " + retval);
+    return retval;
 }
 
 /**
@@ -304,11 +313,10 @@ function IsOnActivitySheet(){
  * @param isBegining Is this calling at the begining of all activity performing
  */
 function CheckAndGoActivity(isBegining) {
-    if (IsOnActivityForm() || IsOnActivitySheet()) return;
+    if (IsOnActivitySheet()) return;
 
     if (!IsOnTaobao()) {
         ShowMessage("不在淘宝界面！");
-        exit();
     }
     if (!IsOnMainForm()) {
         ClickMainPage();
@@ -352,7 +360,7 @@ function CheckAndGoActivity(isBegining) {
             exit();
         }
     }
-    else {
+    if (!IsOnActivitySheet()) {
         ShowMessage("无法找到领喵币界面");
         exit();
     }
@@ -364,12 +372,15 @@ function CheckAndGoActivity(isBegining) {
 function ClickLingmiaobi() {
     if (!IsOnActivitySheet()) {
         var mbbtn =
-            className("android.widget.Button").text("做任务，领喵币").findOnce() ||
-            className("android.view.View").depth(14).indexInParent(3).clickable(false).findOnce();
+            text("做任务，领喵币").findOnce() ||
+            className("android.view.View").depth(14).indexInParent(3).findOnce();
         if (mbbtn) {
             var mbbnd = mbbtn.bounds();
             click(mbbnd.centerX(), mbbnd.centerY());
             sleep(1500);
+        }
+        else{
+            log("无法定位领瞄币按钮");
         }
     }
     if (!IsOnActivitySheet()) {
@@ -471,5 +482,7 @@ function GoActivityBySearching() {
  * @brief check whether is on the second step of searching
  */
 function IsOnSearching() {
-    return className("android.view.View").depth(8).desc("语音搜索").exists();
+    var retval = className("android.view.View").depth(8).desc("语音搜索").exists()
+    log("call -> IsOnSearching");
+    return retval;
 }
